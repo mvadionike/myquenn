@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Для тебя 💌</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s;
+            opacity: 0;
+            pointer-events: none;
+            padding: 20px;
+        }
+
+        .page.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* СТРАНИЦА 1 */
+        #page1 {
+            background: #ffb6c1;
+        }
+
+        .emoji-large {
+            font-size: 150px;
+            animation: pulse 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #d43f6b;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 0 white;
+        }
+
+        .open-hint {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 4px;
+            animation: blink 1.5s infinite;
+            cursor: pointer;
+            padding: 20px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* СТРАНИЦА 2 */
+        #page2 {
+            background: #fff0f5;
+        }
+
+        .hearts-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .heart-fly {
+            position: absolute;
+            font-size: 25px;
+            animation: fly 8s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes fly {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        .two-hearts {
+            font-size: 100px;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+
+        .question-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: #b34167;
+            text-align: center;
+            margin-bottom: 40px;
+            z-index: 2;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 30px;
+            z-index: 2;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            font-size: 30px;
+            font-weight: bold;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-yes {
+            background: #ff8da1;
+            color: white;
+        }
+
+        .btn-yes:hover {
+            background: #ff6b8b;
+            transform: scale(1.1);
+        }
+
+        .btn-no {
+            background: #a9a9a9;
+            color: white;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        /* СТРАНИЦА 3 */
+        #page3 {
+            background: #ffe4ec;
+            overflow-y: auto;
+            justify-content: flex-start;
+            padding: 40px 20px;
+        }
+
+        .top-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #b23b5c;
+            text-align: center;
+            margin: 30px 0;
+            background: rgba(255,255,255,0.5);
+            padding: 20px;
+            border-radius: 50px;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card-item {
+            aspect-ratio: 3/4;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .card-item.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .card-front {
+            background: linear-gradient(145deg, #ffd9e6, #ffc0d5);
+            border: 3px solid white;
+        }
+
+        .card-front .card-emoji {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .card-front .card-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #b34167;
+        }
+
+        .card-back {
+            background: #cba6dd;
+            transform: rotateY(180deg);
+            border: 3px solid white;
+            padding: 10px;
+        }
+
+        .photo-frame {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid #ff99cc;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .back-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+        }
+
+        /* ФИНАЛ */
+        .final-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #b39ddb;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(100%);
+            transition: transform 0.7s;
+            color: white;
+            font-size: 70px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .final-screen.show {
+            transform: translateY(0);
+        }
+
+        .bounce {
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-30px); }
+        }
+
+        .final-emoji {
+            font-size: 150px;
+            margin-top: 30px;
+        }
+
+        audio {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+            h1 { font-size: 32px; }
+            .question-text { font-size: 32px; }
+            .btn { font-size: 24px; padding: 10px 30px; }
+            .grid-cards { grid-template-columns: repeat(2, 1fr); }
+            .top-title { font-size: 24px; }
+            .final-screen { font-size: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Музыка -->
+    <audio id="bgMusic" loop preload="auto"></audio>
+
+    <!-- СТРАНИЦА 1 -->
+    <div id="page1" class="page active">
+        <div class="emoji-large">💌</div>
+        <h1>У МЕНЯ КОЕ-ЧТО<br>ДЛЯ ТЕБЯ</h1>
+        <div class="open-hint" onclick="nextPage(1)">НАЖМИ ЧТОБ ОТКРЫТЬ</div>
+    </div>
+
+    <!-- СТРАНИЦА 2 -->
+    <div id="page2" class="page">
+        <div class="hearts-bg" id="heartsContainer"></div>
+        <div class="two-hearts">❤️‍🔥❤️‍🔥</div>
+        <div class="question-text">Ты будешь моей валентинкой?</div>
+        <div class="btn-container">
+            <button class="btn btn-yes" onclick="nextPage(2)">ДА ❤️</button>
+            <button class="btn btn-no" id="noButton" onmouseenter="runAway(this)" onclick="return false;">НЕТ</button>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 3 -->
+    <div id="page3" class="page">
+        <div class="top-title">
+            И кто же будет моей валентинкой если не ты!?
+        </div>
+        <div class="grid-cards" id="cardsContainer"></div>
+    </div>
+
+    <!-- ФИНАЛ -->
+    <div class="final-screen" id="finalScreen">
+        <div class="bounce">УРАА Я ТАК СЧАСТЛИВ</div>
+        <div class="final-emoji bounce">🥳</div>
+    </div>
+
+    <script>
+        // ДАННЫЕ КАРТОЧЕК (ТЫ НИЧЕГО НЕ МЕНЯЕШЬ)
+        const cardsData = [
+            { front: "Роскошная дама", emoji: "🌸", back: "Ma reine 👑" },
+            { front: "Самая нежная девочка", emoji: "🧸", back: "Meine Prinzessin ✨" },
+            { front: "Девушка с самыми шикарными волосами", emoji: "💇‍♀️", back: "My sunshine ☀️" },
+            { front: "Королева", emoji: "👑", back: "Mi reina ❤️" },
+            { front: "Богиня", emoji: "🙏", back: "Amore mio 🍝" },
+            { front: "Самая неприступная", emoji: "🇷🇺", back: "Ma cherie 🥐" },
+            { front: "Самая умная", emoji: "🧠", back: "My queen 👸" },
+            { front: "Самая горячая", emoji: "🔥", back: "Прекрасная 💐" },
+            { front: "Самая опасная", emoji: "🔫", back: "Cvet moj 🌸" }
+        ];
+
+        // ПЕРЕМЕННЫЕ
+        let openedCards = 0;
+        const totalCards = 9;
+        const music = document.getElementById('bgMusic');
+        
+        // АВТОМАТИЧЕСКИЙ ПОИСК МУЗЫКИ
+        function loadMusic() {
+            // Пробуем разные пути
+            const possiblePaths = [
+                'sounds/song1.mp3',
+                './sounds/song1.mp3',
+                '/sounds/song1.mp3',
+                'song1.mp3',
+                './song1.mp3'
+            ];
+            
+            let loaded = false;
+            
+            function tryPath(index) {
+                if (loaded || index >= possiblePaths.length) return;
+                
+                const audio = new Audio();
+                audio.src = possiblePaths[index];
+                
+                audio.addEventListener('canplaythrough', () => {
+                    music.src = possiblePaths[index];
+                    music.load();
+                    loaded = true;
+                }, { once: true });
+                
+                audio.addEventListener('error', () => {
+                    tryPath(index + 1);
+                });
+                
+                audio.load();
+            }
+            
+            tryPath(0);
+        }
+
+        // ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ
+        function nextPage(current) {
+            if (current === 1) {
+                document.getElementById('page1').classList.remove('active');
+                document.getElementById('page2').classList.add('active');
+                createHearts();
+                loadMusic();
+            } else if (current === 2) {
+                document.getElementById('page2').classList.remove('active');
+                document.getElementById('page3').classList.add('active');
+                createCards();
+            }
+        }
+
+        // ЛЕТАЮЩИЕ СЕРДЦА
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart-fly';
+                heart.innerHTML = ['❤️', '🧡', '💛', '💚', '💙', '💜'][Math.floor(Math.random() * 6)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.animationDuration = (5 + Math.random() * 5) + 's';
+                heart.style.fontSize = (15 + Math.random() * 30) + 'px';
+                container.appendChild(heart);
+            }
+        }
+
+        // КНОПКА "НЕТ" УБЕГАЕТ
+        function runAway(btn) {
+            const x = Math.random() * (window.innerWidth - 200);
+            const y = Math.random() * (window.innerHeight - 100);
+            
+            btn.style.position = 'fixed';
+            btn.style.left = x + 'px';
+            btn.style.top = y + 'px';
+            btn.style.zIndex = '9999';
+            
+            // ИСКРЫ
+            for (let i = 0; i < 10; i++) {
+                const spark = document.createElement('div');
+                spark.style.position = 'absolute';
+                spark.style.width = '8px';
+                spark.style.height = '8px';
+                spark.style.background = '#ff0';
+                spark.style.borderRadius = '50%';
+                spark.style.boxShadow = '0 0 15px #f90';
+                spark.style.left = '50%';
+                spark.style.top = '50%';
+                spark.style.pointerEvents = 'none';
+                
+                const angle = (i / 10) * Math.PI * 2;
+                const distance = 50 + Math.random() * 50;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                spark.style.animation = `sparkFly 0.6s ease-out forwards`;
+                spark.style.setProperty('--tx', tx + 'px');
+                spark.style.setProperty('--ty', ty + 'px');
+                
+                btn.appendChild(spark);
+                setTimeout(() => spark.remove(), 600);
+            }
+        }
+
+        // ДОБАВЛЯЕМ СТИЛИ ДЛЯ ИСКР
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkFly {
+                0% { transform: translate(0, 0) scale(1); opacity: 1; }
+                100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // СОЗДАНИЕ КАРТОЧЕК
+        function createCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            cardsData.forEach((card, index) => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card-item';
+                cardDiv.setAttribute('data-index', index);
+                
+                cardDiv.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-emoji">${card.emoji}</div>
+                            <div class="card-text">${card.front}</div>
+                        </div>
+                        <div class="card-back">
+                            <div class="photo-frame" id="photo-${index}">
+                                <!-- ФОТО БУДЕТ ВСТАВЛЕНО АВТОМАТИЧЕСКИ -->
+                            </div>
+                            <div class="back-text">${card.back}</div>
+                        </div>
+                    </div>
+                `;
+                
+                cardDiv.addEventListener('click', () => openCard(cardDiv, index));
+                container.appendChild(cardDiv);
+                
+                // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ФОТО
+                const photoFrame = document.getElementById(`photo-${index}`);
+                const img = document.createElement('img');
+                
+                // Пробуем разные пути для фото
+                const photoNumber = index + 1;
+                const paths = [
+                    `images/foto${photoNumber}.jpg`,
+                    `./images/foto${photoNumber}.jpg`,
+                    `foto${photoNumber}.jpg`,
+                    `./foto${photoNumber}.jpg`
+                ];
+                
+                let loaded = false;
+                
+                function tryPath(pathIndex) {
+                    if (loaded || pathIndex >= paths.length) return;
+                    
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        img.src = paths[pathIndex];
+                        photoFrame.innerHTML = '';
+                        photoFrame.appendChild(img);
+                        loaded = true;
+                    };
+                    testImg.onerror = () => tryPath(pathIndex + 1);
+                    testImg.src = paths[pathIndex];
+                }
+                
+                tryPath(0);
+            });
+        }
+
+        // ОТКРЫТИЕ КАРТОЧКИ
+        function openCard(card, index) {
+            if (card.classList.contains('flipped')) return;
+            
+            card.classList.add('flipped');
+            
+            // ЗАПУСК МУЗЫКИ
+            if (music.paused) {
+                music.play().catch(() => {
+                    // Если не получилось, пробуем при клике на страницу
+                    document.addEventListener('click', function playOnce() {
+                        music.play();
+                        document.removeEventListener('click', playOnce);
+                    }, { once: true });
+                });
+            }
+            
+            openedCards++;
+            
+            // ПРОВЕРКА ФИНАЛА
+            if (openedCards === totalCards) {
+                setTimeout(() => {
+                    document.getElementById('finalScreen').classList.add('show');
+                }, 800);
+            }
+        }
+
+        // ПРЕДОТВРАЩАЕМ КЛИК ПО НЕТ
+        document.getElementById('noButton')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('💔 Ну пожалуйста... нажми ДА!');
+        });
+
+        // ПРЕДЗАГРУЗКА
+        window.addEventListener('load', () => {
+            // Создаем несколько сердец сразу
+            createHearts();
+        });
+
+        // ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+        document.addEventListener('touchstart', () => {}, {passive: true});
+    </script>
+</body>
+</html>
